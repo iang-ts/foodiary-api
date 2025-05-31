@@ -1,16 +1,29 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: ianfs
-# "service" is the name of this project. This will also be added to your AWS resource names.
 service: foodiary-api
 
 provider:
   name: aws
-  runtime: nodejs20.x
+  region: sa-east-1
+  runtime: nodejs22.x
+  memorySize: 128
+
+package:
+  individually: true
+
+build:
+ esbuild:
+    bundle: true
+    minify: true
+    sourcemap: true
+    exclude:
+      - '@aws-sdk/*'
+    external:
+      - '@aws-sdk/*'
 
 functions:
   hello:
-    handler: handler.hello
+    handler: src/main/functions/hello.handler
     events:
       - httpApi:
-          path: /
-          method: get
+          path: /hello/{id}
+          method: POST
