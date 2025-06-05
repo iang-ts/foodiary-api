@@ -6,18 +6,21 @@ provider:
   region: sa-east-1
   runtime: nodejs22.x
   memorySize: 128
+  stage: ${opt:stage, 'dev'}
+
+custom:
+  userPoolName: "${self:service}-${self:provider.stage}-UserPool"
+  userPoolClientName: "${self:service}-${self:provider.stage}-UserPoolClient"
 
 package:
   individually: true
 
 build:
- esbuild:
+  esbuild:
     configFile: ./esbuild.config.mjs
 
 functions:
-  hello:
-    handler: src/main/functions/hello.handler
-    events:
-      - httpApi:
-          path: /hello/{id}
-          method: POST
+  - ${file(./sls/functions/auth.yml)}
+
+resources:
+  - ${file(./sls/resources/UserPool.yml)}
