@@ -1,4 +1,4 @@
-import type { Constructor } from "@shared/types/Constructor";
+import { Constructor } from "@shared/types/Constructor";
 
 export class Registry {
   private static instance: Registry | undefined;
