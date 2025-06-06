@@ -2,7 +2,7 @@ Resources:
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties:
-      UserPoolName: ${self:custom.userPoolName}
+      UserPoolName: ${self:custom.cognito.userPoolName}
       DeletionProtection: ACTIVE
       MfaConfiguration: OFF
       AutoVerifiedAttributes:
@@ -26,8 +26,9 @@ Resources:
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      ClientName: ${self:custom.userPoolClientName}
+      ClientName: ${self:custom.cognito.userPoolClientName}
       UserPoolId: !Ref UserPool
+      GenerateSecret: true
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
       TokenValidityUnits:

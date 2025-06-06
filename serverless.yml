@@ -10,8 +10,9 @@ provider:
   environment: ${file(./sls/config/env.yml)}
 
 custom:
-  userPoolName: "${self:service}-${self:provider.stage}-UserPool"
-  userPoolClientName: "${self:service}-${self:provider.stage}-UserPoolClient"
+  cognito:
+    userPoolName: "${self:service}-${self:provider.stage}-UserPool"
+    userPoolClientName: "${self:service}-${self:provider.stage}-UserPoolClient"
 
 package:
   individually: true
