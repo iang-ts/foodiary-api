@@ -6,6 +6,8 @@ import { env } from "./env";
 export class AppConfig {
   readonly auth: AppConfig.Auth;
 
+  readonly db: AppConfig.Database;
+
   constructor() {
     this.auth = {
       cognito: {
@@ -13,6 +15,12 @@ export class AppConfig {
           id: env.COGNITO_CLIENT_ID,
           clientSecret: env.COGNITO_CLIENT_SECRET,
         }
+      }
+    }
+
+    this.db = {
+      dynamodb:{
+        mainTable: env.MAIN_TABLE_NAME,
       }
     }
   }
@@ -25,6 +33,12 @@ export namespace AppConfig {
         id: string;
         clientSecret: string;
       }
+    };
+  };
+
+  export type Database = {
+    dynamodb: {
+      mainTable: string;
     };
   };
 }
