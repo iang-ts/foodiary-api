@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 
-import { GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { ConfirmForgotPasswordCommand, ForgotPasswordCommand, GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { cognitoClient } from "@infra/clients/cognitoClient";
 
 import { InvalidRefreshToken } from '@application/errors/application/InvalidRefreshToken';
@@ -90,6 +90,29 @@ export class AuthGateway {
     }
   }
 
+  async forgotPassword({ email }: AuthGateway.ForgotPasswordParams): Promise<void> {
+    const command = new ForgotPasswordCommand({
+      ClientId: this.appConfig.auth.cognito.client.id,
+      Username: email,
+      SecretHash: this.getSecretHash(email),
+    })
+
+    await cognitoClient.send(command);
+  }
+
+  async confirmForgotPassword({ email, confirmationCode, password }: AuthGateway.ConfirmForgotPasswordParams): Promise<void> {
+    const command = new ConfirmForgotPasswordCommand({
+      ClientId: this.appConfig.auth.cognito.client.id,
+      Username: email,
+      ConfirmationCode: confirmationCode,
+      Password: password,
+      SecretHash: this.getSecretHash(email),
+    })
+
+    await cognitoClient.send(command);
+  }
+
+
   private getSecretHash(email: string): string {
     return createHmac('SHA256', this.appConfig.auth.cognito.client.secret)
       .update(`${email}${this.appConfig.auth.cognito.client.id}`)
@@ -125,5 +148,15 @@ export namespace AuthGateway {
   export type RefreshTokenResult = {
     accessToken: string;
     refreshToken: string;
+  }
+
+  export type ForgotPasswordParams = {
+    email: string;
+  }
+
+  export type ConfirmForgotPasswordParams = {
+    email: string;
+    confirmationCode: string;
+    password: string;
   }
 }
