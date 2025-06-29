@@ -13,7 +13,7 @@ export class AppConfig {
       cognito: {
         client: {
           id: env.COGNITO_CLIENT_ID,
-          clientSecret: env.COGNITO_CLIENT_SECRET,
+          secret: env.COGNITO_CLIENT_SECRET,
         }
       }
     }
@@ -31,7 +31,7 @@ export namespace AppConfig {
     cognito: {
       client: {
         id: string;
-        clientSecret: string;
+        secret: string;
       }
     };
   };
