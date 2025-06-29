@@ -22,7 +22,7 @@ export class ConfirmForgotPasswordController extends Controller<'public', Confir
     });
 
     return {
-      statusCode: 200,
+      statusCode: 204,
     }
   }
 }
