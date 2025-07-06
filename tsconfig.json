@@ -13,6 +13,7 @@
 
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "jsx": "react",
     "baseUrl": ".",
     "paths": {
       "@application/*": ["src/application/*"],
