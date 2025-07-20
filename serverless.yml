@@ -11,6 +11,7 @@ provider:
   iam:
     role: ${file(./sls/config/role.yml)}
   httpApi:
+    disableDefaultEndpoint: ${env:DISABLE_DEFAULT_API_GATEWAY_ENDPOINT, false}
     authorizers:
       CognitoAuthorizer:
         type: jwt
@@ -38,3 +39,4 @@ functions:
 resources:
   - ${file(./sls/resources/UserPool.yml)}
   - ${file(./sls/resources/MainTable.yml)}
+  - ${file(./sls/resources/APIGWCustomDomain.yml)}
