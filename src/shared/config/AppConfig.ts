@@ -14,6 +14,9 @@ export class AppConfig {
         client: {
           id: env.COGNITO_CLIENT_ID,
           secret: env.COGNITO_CLIENT_SECRET,
+        },
+        pool: {
+          id: env.COGNITO_POOL_ID
         }
       }
     }
@@ -32,6 +35,9 @@ export namespace AppConfig {
       client: {
         id: string;
         secret: string;
+      }
+      pool: {
+        id: string;
       }
     };
   };

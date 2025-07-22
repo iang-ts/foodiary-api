@@ -1,12 +1,11 @@
 import { createHmac } from 'node:crypto';
 
-import { ConfirmForgotPasswordCommand, ForgotPasswordCommand, GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
+import { AdminDeleteUserCommand, ConfirmForgotPasswordCommand, ForgotPasswordCommand, GetTokensFromRefreshTokenCommand, InitiateAuthCommand, SignUpCommand } from "@aws-sdk/client-cognito-identity-provider";
 import { cognitoClient } from "@infra/clients/cognitoClient";
 
 import { InvalidRefreshToken } from '@application/errors/application/InvalidRefreshToken';
 import { Injectable } from "@kernel/decorators/Injectable";
 import { AppConfig } from "@shared/config/AppConfig";
-
 
 @Injectable()
 export class AuthGateway {
@@ -112,6 +111,14 @@ export class AuthGateway {
     await cognitoClient.send(command);
   }
 
+  async deleteUser({ externalId }: AuthGateway.DeleteUserParams) {
+    const command = new AdminDeleteUserCommand({
+      UserPoolId: this.appConfig.auth.cognito.pool.id,
+      Username: externalId,
+    });
+
+    await cognitoClient.send(command);
+  }
 
   private getSecretHash(email: string): string {
     return createHmac('SHA256', this.appConfig.auth.cognito.client.secret)
@@ -158,5 +165,9 @@ export namespace AuthGateway {
     email: string;
     confirmationCode: string;
     password: string;
+  }
+
+  export type DeleteUserParams = {
+    externalId: string
   }
 }
