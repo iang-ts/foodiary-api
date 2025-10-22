@@ -6,3 +6,12 @@ createMeal:
           method: POST
           authorizer:
             name: CognitoAuthorizer
+
+listMealsByDay:
+    handler: src/main/functions/meals/listMealsByDay.handler
+    events:
+      - httpApi:
+          path: /meals
+          method: GET
+          authorizer:
+            name: CognitoAuthorizer
