@@ -34,8 +34,6 @@ export class ListMealsByDayQuery {
     const { Items = [] } = await dynamoClient.send(command);
     const items = Items as ListMealsByDayQuery.MealItemType[];
 
-    console.log(JSON.stringify(items, null, 2));
-
     const meals: ListMealsByDayQuery.Output['meals'] = items.map(item => ({
      id: item.id,
      createdAt: item.createdAt,
