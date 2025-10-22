@@ -8,6 +8,9 @@ export const schema = z.object({
 
   // Database
   MAIN_TABLE_NAME: z.string().min(1),
+
+  // Bucket
+  MEALS_BUCKET: z.string().min(1),
 });
 
 export const env = schema.parse(process.env);
