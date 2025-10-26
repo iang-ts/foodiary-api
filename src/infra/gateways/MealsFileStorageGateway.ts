@@ -28,6 +28,7 @@ export class MealsFileStorageGatway {
   }
 
   async createPOST({
+    accountId,
     mealId,
     file,
   }: MealsFileStorageGatway.CreatePOSTParams): Promise<MealsFileStorageGatway.CreatePOSTResult> {
@@ -46,6 +47,7 @@ export class MealsFileStorageGatway {
       ],
       Fields: {
         'x-amz-meta-mealid': mealId,
+        'X-amz-meta-accountid': accountId,
       },
     });
 
@@ -67,6 +69,7 @@ export namespace MealsFileStorageGatway {
   };
 
   export type CreatePOSTParams = {
+    accountId: string;
     mealId: string;
     file: {
       key: string;
