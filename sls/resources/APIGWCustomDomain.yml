@@ -1,5 +1,5 @@
 Conditions:
-  ShouldSetupCustomDomain: !And
+  ShouldSetupApiGatewayCustomDomain: !And
     - !Not
       - !Equals
         - ${env:API_DOMAIN_NAME, ''}
@@ -11,7 +11,7 @@ Conditions:
 
 Resources:
   APIGWCustomDomainCertificate:
-    Condition: ShouldSetupCustomDomain
+    Condition: ShouldSetupApiGatewayCustomDomain
     Type : AWS::CertificateManager::Certificate
     Properties:
       DomainName: ${env:API_DOMAIN_NAME, ''}
