@@ -42,7 +42,6 @@ export class GoalRepository {
           '#proteins': 'proteins',
           '#carbohydrates': 'carbohydrates',
           '#fats': 'fats',
-          '#weight': 'weight',
         },
         ExpressionAttributeValues: {
           ':calories': goalItem.calories,

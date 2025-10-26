@@ -36,6 +36,7 @@ functions:
   - ${file(./sls/functions/auth.yml)}
   - ${file(./sls/functions/meals.yml)}
   - ${file(./sls/functions/profiles.yml)}
+  - ${file(./sls/functions/goals.yml)}
   - ${file(./sls/functions/accounts.yml)}
 
 resources:
