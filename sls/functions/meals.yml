@@ -24,3 +24,12 @@ getMealById:
           method: GET
           authorizer:
             name: CognitoAuthorizer
+
+onMealFileUploaded:
+    handler: src/main/functions/meals/onMealFileUploaded.handler
+    events:
+      - s3:
+          bucket: !Ref MealsBucket
+          event: s3:ObjectCreated:*
+          existing: true
+          forceDeploy: true
