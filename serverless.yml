@@ -45,3 +45,4 @@ resources:
   - ${file(./sls/resources/APIGWCustomDomain.yml)}
   - ${file(./sls/resources/MealsBucket.yml)}
   - ${file(./sls/resources/MealsBucketCDN.yml)}
+  - ${file(./sls/resources/MealsQueue.yml)}

@@ -1,0 +1,19 @@
+Resources:
+  MealsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ${self:service}-${self:provider.stage}-MealsQueue
+      VisibilityTimeout: 130
+      ReceiveMessageWaitTimeSeconds: 20
+      RedrivePolicy:
+        maxReceiveCount: 2
+        deadLetterTargetArn: !GetAtt MealsDLQ.Arn
+
+
+  MealsDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: ${self:service}-${self:provider.stage}-MealsDLQ
+      MessageRetentionPeriod: 1209600 # 14 days
+
+
