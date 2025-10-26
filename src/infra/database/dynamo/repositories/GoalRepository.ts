@@ -1,5 +1,5 @@
 import { Goal } from "@application/entities/Goal";
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, PutCommandInput, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { dynamoClient } from "@infra/clients/dyamoClient";
 import { Injectable } from "@kernel/decorators/Injectable";
 import { AppConfig } from "@shared/config/AppConfig";
@@ -8,6 +8,53 @@ import { GoalItem } from "../items/GoalItem";
 @Injectable()
 export class GoalRepository {
   constructor(private readonly config: AppConfig) { }
+
+  async findByAccountId(accountId: string): Promise<Goal | null> {
+      const command = new GetCommand({
+        TableName: this.config.db.dynamodb.mainTable,
+        Key: {
+          PK: GoalItem.getPK(accountId),
+          SK: GoalItem.getSK(accountId),
+        }
+      });
+
+      const { Item: goalitem } = await dynamoClient.send(command);
+
+      if (!goalitem) {
+        return null;
+      }
+
+      return GoalItem.toEntity(goalitem as GoalItem.ItemType);
+    }
+
+    async save(goal: Goal) {
+      const goalItem = GoalItem.fromEntity(goal).toItem();
+
+      const command = new UpdateCommand({
+        TableName: this.config.db.dynamodb.mainTable,
+        Key: {
+          PK: goalItem.PK,
+          SK: goalItem.SK,
+        },
+        UpdateExpression: 'SET #calories = :calories, #proteins = :proteins, #carbohydrates = :carbohydrates, #fats = :fats',
+        ExpressionAttributeNames: {
+          '#calories': 'calories',
+          '#proteins': 'proteins',
+          '#carbohydrates': 'carbohydrates',
+          '#fats': 'fats',
+          '#weight': 'weight',
+        },
+        ExpressionAttributeValues: {
+          ':calories': goalItem.calories,
+          ':proteins': goalItem.proteins,
+          ':carbohydrates': goalItem.carbohydrates,
+          ':fats': goalItem.fats,
+        },
+        ReturnValues: 'NONE',
+      });
+
+      await dynamoClient.send(command);
+    }
 
   getPutCommandInput(goal: Goal): PutCommandInput {
     const goalItem = GoalItem.fromEntity(goal);
