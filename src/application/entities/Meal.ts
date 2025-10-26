@@ -9,9 +9,9 @@ export class Meal {
 
   attempts: number
 
-  inputType: Meal.InputTYpe
+  readonly inputType: Meal.InputTYpe
 
-  inputFileKey: string;
+  readonly inputFileKey: string;
 
   name: string;
 
