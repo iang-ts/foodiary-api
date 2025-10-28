@@ -69,6 +69,6 @@ export namespace Meal {
     calories: number;
     proteins: number;
     carbohydrates: number;
-    fat: number;
+    fats: number;
   }
 }
