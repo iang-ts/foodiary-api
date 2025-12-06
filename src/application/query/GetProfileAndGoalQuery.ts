@@ -19,7 +19,7 @@ export class GetProfileAndGoalQuery {
       TableName: this.config.db.dynamodb.mainTable,
       Limit: 2,
       ProjectionExpression:
-        "#PK, #SK, #name, #birthDate, #gender, #height, #weight, #calories, #carbohydrates, #fats, #proteins, #type",
+        "#PK, #SK, #name, #birthDate, #gender, #height, #weight, #calories, #carbohydrates, #fats, #proteins, #type, #goal",
       KeyConditionExpression: "#PK = :PK AND begins_with(#SK, :SK)",
       ExpressionAttributeNames: {
         "#PK": "PK",
@@ -34,6 +34,7 @@ export class GetProfileAndGoalQuery {
         "#fats": "fats",
         "#proteins": "proteins",
         "#type": "type",
+        "#goal" : "goal"
       },
       ExpressionAttributeValues: {
         ":PK": AccountItem.getPK(accountId),
@@ -73,6 +74,7 @@ export namespace GetProfileAndGoalQuery {
     gender: Profile.Gender;
     height: number;
     weight: number;
+    goal: Profile.Goal;
   };
 
   export type GoalItemType = {
@@ -89,6 +91,7 @@ export namespace GetProfileAndGoalQuery {
       gender: Profile.Gender;
       height: number;
       weight: number;
+      goal: Profile.Goal;
     };
     goal: {
       calories: number;
