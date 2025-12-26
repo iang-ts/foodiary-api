@@ -1,69 +1,120 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v4
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, Inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Foodiary
 
-# Serverless Framework Node HTTP API on AWS
+> App mobile de rastreamento nutricional com análise de refeições por IA
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+Aplicação serverless full-stack que permite registrar refeições através de fotos ou áudio, recebendo análises nutricionais automáticas por GPT-4. Calcula metas personalizadas e acompanha o consumo diário de calorias e macronutrientes.
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+## Funcionalidades
 
-## Usage
+- Registro de refeições por **foto** (GPT-4 Vision) ou **áudio** (transcrição + análise)
+- Análise automática de macronutrientes (proteínas, carboidratos, gorduras)
+- Cálculo personalizado de metas nutricionais (equação Harris-Benedict)
+- Autenticação e gestão de perfil (AWS Cognito)
+- Acompanhamento diário com gráficos de progresso
+- Processamento assíncrono com atualizações em tempo real
 
-### Deployment
+## Stack
 
-In order to deploy the example, you need to run the following command:
+### Backend (Serverless)
+- **Runtime:** Node.js 22 + TypeScript 5.8
+- **Cloud:** AWS Lambda, API Gateway, DynamoDB, S3, SQS, Cognito
+- **IA:** OpenAI SDK (GPT-4 Vision/Audio)
+- **Framework:** Serverless Framework v4
+- **Libs:** Zod, AWS SDK v3, React Email
 
-```
-serverless deploy
-```
+### Frontend (Mobile)
+- **Framework:** React Native 0.81 + Expo SDK 54
+- **Linguagem:** TypeScript 5.9 (strict mode)
+- **State:** TanStack Query v5, React Context
+- **UI:** React Navigation v7, React Hook Form, Moti, Reanimated
+- **Libs:** Axios, Zod, Expo Camera/Audio
 
-After running deploy, you should see output similar to:
+## Arquitetura
 
-```
-Deploying "serverless-http-api" to stage "dev" (us-east-1)
-
-✔ Service deployed to stack serverless-http-api-dev (91s)
-
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: serverless-http-api-dev-hello (1.6 kB)
-```
-
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [HTTP API (API Gateway V2) event docs](https://www.serverless.com/framework/docs/providers/aws/events/http-api).
-
-### Invocation
-
-After successful deployment, you can call the created application via HTTP:
+### Backend - Clean Architecture
 
 ```
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+Application Layer
+├── Entities (Account, Profile, Goal, Meal)
+├── Use Cases (CreateMeal, UpdateProfile, CalculateGoals)
+└── Controllers (HTTP handlers)
+
+Infrastructure Layer
+├── Database (DynamoDB Single Table Design)
+├── AI (OpenAI integration)
+└── AWS Services (S3, SQS, Cognito)
+
+Kernel
+└── Dependency Injection (custom registry com decorators)
 ```
 
-Which should result in response similar to:
+**Design Patterns:**
+- Dependency Injection (decorators + reflection)
+- Repository Pattern
+- Unit of Work
+- Saga Pattern (transações distribuídas)
+- Adapter Pattern (Lambda events)
 
-```json
-{ "message": "Go Serverless v4! Your function executed successfully!" }
+### Frontend - Domain-Driven Design
+
+```
+App Layer
+├── Services (API clients com namespaces TypeScript)
+├── Hooks (Queries/Mutations TanStack Query)
+└── Navigation (3-tier: Root → Auth/App → Screens)
+
+UI Layer
+├── Screens (Controller Pattern)
+└── Components (Variant Pattern)
 ```
 
-### Local development
-
-The easiest way to develop and test your function is to use the `dev` command:
+### Fluxo de Processamento (Event-Driven)
 
 ```
-serverless dev
+Cliente → API (presigned URL) → S3 Upload → S3 Trigger
+→ SQS Queue → Lambda Processing → GPT-4 Analysis → DynamoDB
 ```
 
-This will start a local emulator of AWS Lambda and tunnel your requests to and from AWS Lambda, allowing you to interact with your function as if it were running in the cloud.
+## Database Design
 
-Now you can invoke the function as before, but this time the function will be executed locally. Now you can develop your function locally, invoke it, and see the results immediately without having to re-deploy.
+**DynamoDB Single Table** com GSI para queries otimizadas:
 
-When you are done developing, don't forget to run `serverless deploy` to deploy the function to the cloud.
+```
+Account:  PK=ACCOUNT#id        SK=ACCOUNT#id
+Profile:  PK=ACCOUNT#id        SK=PROFILE#id
+Goal:     PK=ACCOUNT#id        SK=GOAL#id
+Meal:     PK=ACCOUNT#id        SK=MEAL#mealId
+          GSI1PK=ACCOUNT#id#MEALS  GSI1SK=MEAL#createdAt#id
+```
+
+## Setup
+
+### Backend
+```bash
+cd foodiary-api
+pnpm install
+# Configurar .env (OPENAI_API_KEY, AWS credentials, etc)
+pnpm run deploy
+```
+
+### Frontend
+```bash
+cd foodiary-app
+pnpm install
+# Configurar .env (EXPO_PUBLIC_API_URL)
+pnpm start
+```
+
+## Destaques Técnicos
+
+- **TypeScript strict mode** em todo o projeto
+- **Path aliases** para imports limpos
+- **Serverless** com otimizações (esbuild, bundles individuais)
+- **Segurança**: JWT via Cognito, presigned URLs, validação Zod
+- **Observabilidade**: CloudWatch Logs, alarmes DLQ, PITR DynamoDB
+- **Performance**: TanStack Query com caching estratégico
+- **UX**: Animações suaves, loading states, pull-to-refresh
+
+---
+
+**Desenvolvido com TypeScript, AWS e React Native**
